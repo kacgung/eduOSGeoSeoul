@@ -1,0 +1,40 @@
+scratch/
+img_unused/
+
+# --- 실행 파일 및 빌드 결과물 ---
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+out/
+
+# --- Go 언어 관련 ---
+# 의존성 패키지는 go.mod에서 관리하므로 실제 파일은 제외해도 됩니다.
+vendor/
+
+# --- GIS 데이터 (용량이 커서 깃에 올리면 안 됨) ---
+*.shp
+*.shx
+*.dbf
+*.prj
+*.sbn
+*.sbx
+*.cpg
+*.gpkg
+*.tiff
+*.tif
+data/raw/
+
+# --- 설정 및 보안 파일 (비밀번호 등) ---
+.env
+config.yaml
+auth.json
+
+# --- OS 및 에디터 임시 파일 ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
