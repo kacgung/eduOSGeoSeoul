@@ -4,14 +4,14 @@
 > 우리가 가지고 있는 공간 데이터를 인터넷에 제공하는 방법을 알아 보는 것입니다.  
 > #GeoServer #Docker #uDig #HTTPD #PostGIS
 
-- [GeoServer 설치 Docker Container](#GeoServer-설치-Docker-Container)
-- [GeoServer 레이어 등록](#GeoServer-레이어-등록)
-- [OGC 웹서비스 이해](#OGC-웹서비스-이해)
+- [GeoServer 설치 Docker Container](#geoserver-설치-docker-container)
+- [GeoServer 레이어 등록](#geoserver-레이어-등록)
+- [OGC 웹서비스 이해](#ogc-웹서비스-이해)
 - [레이어 그룹과 스타일](#레이어-그룹과-스타일)
-- [uDig을 이용한 순쉬운 스타일링](#uDig을-이용한-순쉬운-스타일링)
-- [GWC를 이용한 캐시](#GWC를-이용한-캐시)
-- [서비스를 위한 Stack 구성](#서비스를-위한-Stack-구성)
-- [PostGIS 저장소로 레이어 발행하기](#PostGIS-저장소로-레이어-발행하기)
+- [uDig을 이용한 순쉬운 스타일링](#udig을-이용한-순쉬운-스타일링)
+- [GWC를 이용한 캐시](#gwc를-이용한-캐시)
+- [서비스를 위한 Stack 구성](#서비스를-위한-stack-구성)
+- [PostGIS 저장소로 레이어 발행하기](#postgis-저장소로-레이어-발행하기)
 
 <br>
 
