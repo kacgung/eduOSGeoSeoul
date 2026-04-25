@@ -1,8 +1,8 @@
 # 🌍 eduOSGeoSeoul: 오픈소스 공간정보 교육 가이드
 
-**eduOSGeoSeoul**은 [OSGeo(Open Source Geospatial Foundation) 한국지부](https://www.osgeo.kr)에서 제공하는 오픈소스 공간정보(OSSGIS) 기술 교육을 위한 실습 기반 지무 교육 저장소입니다.
+**eduOSGeoSeoul**은 [OSGeo(Open Source Geospatial Foundation) 한국지부](https://www.osgeo.kr)에서 제공하는 오픈소스 공간정보(OSSGIS) 기술 교육을 위한 실습 기반 직무 교육 저장소입니다.
 
-이 과정은 전문가들이 실무에서 즉시 활용할 수 있도록 **PostGIS**를 이용한 데이터 관리와 **GeoServer**를 활용한 웹 서비스 발행의 핵심 기술을 다룹니다.
+이 과정은 즉시 활용할 수 있도록 **PostGIS**를 이용한 데이터 관리와 **GeoServer**를 활용한 웹 서비스 발행의 핵심 기술을 다룹니다.
 
 ---
 
