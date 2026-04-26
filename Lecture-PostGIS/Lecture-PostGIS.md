@@ -461,11 +461,11 @@ pause
 공간정보 여러개 올리기기 실행하기(cmd):
 ![](img/2026-03-02-19-30-01.png)
 
+<br>
 
 >[!important]
 QGIS에서 `road_link_geographic` 레이어의 좌표체계 및 인코딩을 확인하고, 다시 업로드하세요.
 `OSGeo4W Shell` 대신 `명령프롬프트(CMD)` 에서도 다음과 같이 환경실행 파일을 찾아서 실행할 수 있음.
-
 
 환경실행파일 실행(cmd):
 ```Bash
@@ -477,9 +477,22 @@ ogr2ogr --version
 
 `road_link_geographic` 레이어 다시 올리기:
 ```Bash
-ogr2ogr -progress --config PG_USE_COPY YES --config SHAPE_ENCODING UTF-8 -f PostgreSQL "PG:dbname='osgeo' host=localhost port=5432 user='postgres' password='postgres'" -overwrite -nlt PROMOTE_TO_MULTI -lco GEOMETRY_NAME=geom -lco FID=id -lco PRECISION=NO road_link_geographic.shp -nln public.road_link_geographic -s_srs EPSG:4326 -t_srs EPSG:4326
+ogr2ogr -progress `
+  --config PG_USE_COPY YES `
+  --config SHAPE_ENCODING UTF-8 `
+  -f PostgreSQL "PG:dbname='osgeo' host=localhost port=5432 user='postgres' password='postgres'" `
+  -overwrite `
+  -nlt PROMOTE_TO_MULTI `
+  -lco GEOMETRY_NAME=geom `
+  -lco FID=id `
+  -lco PRECISION=NO `
+  road_link_geographic.shp `
+  -nln public.road_link_geographic `
+  -s_srs EPSG:4326 `
+  -t_srs EPSG:4326
 ```
 
+<br>
 
 >[!note]
 >`OSGeo4W Shell` 대신 `파워쉘(pwsh)` 사용 한다면,
@@ -572,6 +585,7 @@ Pause
 ```
 
 <br>
+
 ## 공간 SQL 기초
 
 <br>
