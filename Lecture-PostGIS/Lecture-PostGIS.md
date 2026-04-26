@@ -340,12 +340,22 @@ admin_emd를 열어보니 한글이 다 깨져 보이는군요.
 
 `윈도우 키> OSGeo4W Shell` 을 실행하세요. 다음 명령어를 실행하여 레이어를 올리세요.
 
-```Bash
+```bash
 cd c:\data
 ```
 
-```Bash
-ogr2ogr -progress --config PG_USE_COPY YES --config SHAPE_ENCODING CP949 -f PostgreSQL "PG:dbname='osgeo' host=localhost port=5432 user='postgres' password='postgres'" -overwrite -nlt PROMOTE_TO_MULTI -lco GEOMETRY_NAME=geom -lco FID=id -lco PRECISION=NO admin_sid.shp -nln public.admin_sid
+```bash
+ogr2ogr -progress `
+  --config PG_USE_COPY YES `
+  --config SHAPE_ENCODING CP949 `
+  -f PostgreSQL "PG:dbname='osgeo' host=localhost port=5432 user='postgres' password='postgres'" `
+  -overwrite `
+  -nlt PROMOTE_TO_MULTI `
+  -lco GEOMETRY_NAME=geom `
+  -lco FID=id `
+  -lco PRECISION=NO `
+  admin_sid.shp `
+  -nln public.admin_sid
 ```
 
 ![](img/2026-03-02-16-37-45.png)
@@ -367,21 +377,33 @@ ogr2ogr -progress --config PG_USE_COPY YES --config SHAPE_ENCODING CP949 -f Post
 >
 >4. 테이블 구조 및 이름 정의  
 >-lco FID=id: 고유 식별자(Primary Key) 컬럼 이름을 id로 설정  
->-nln public.admin_sid: 생성될 테이블의 스키마와 이름(public 스키마의 admin_sid 테이블) 지정  
->  
->  
-
+>-nln public.admin_sid: 생성될 테이블의 스키마와 이름(public 스키마의 admin_sid 테이블) 지정
+  
 
 <br>
 
 ### GDAL(ogr2ogr) 활용하여 PostGIS에 공간정보 여러개 올리기
 
-<br>
 
-다음과 같이 배치파일을 작성하고 실행하여서 여러개의 공간정보를 PostGIS에 올리세요. 터미널(CMD)에서 한글 깨짐을 방지하기 위해서 CP949 또는 EUC-KR 로 설정하세요.
+다음과 같이 실행 파일을 작성하고 실행하여서 여러개의 공간정보를 PostGIS에 올리세요.
 
 
+Shp 파일이 있는 폴더로 이동:
 ```Bash
+cd c:\data
+```
+
+
+`OSGeo4W Shell` 환경실행파일 찾기(cmd):
+```Bash
+where /r C:\ o4w_env.bat
+```
+
+
+공강정보 여러개 올리기 실행파일 작성하기(cmd):
+```Bash
+# import_shps.cmd
+
 @echo off
 setlocal enabledelayedexpansion
 
@@ -435,30 +457,121 @@ echo ">>> All files processed."
 pause
 ```
 
+
+공간정보 여러개 올리기기 실행하기(cmd):
 ![](img/2026-03-02-19-30-01.png)
 
-<br>
 
-QGIS에서 `road_link_geographic` 레이어의 좌표체계 및 인코딩을 확인하고, 삭제 후 다시 업로드하세요.
+>[!important]
+QGIS에서 `road_link_geographic` 레이어의 좌표체계 및 인코딩을 확인하고, 다시 업로드하세요.
+`OSGeo4W Shell` 대신 `명령프롬프트(CMD)` 에서도 다음과 같이 환경실행 파일을 찾아서 실행할 수 있음.
 
-```Bash
-where /r C:\ o4w_env.bat
-```
 
+환경실행파일 실행(cmd):
 ```Bash
 C:\Users\bon\AppData\Local\Programs\OSGeo4W\bin\o4w_env.bat
+
+# 다시 확인
+ogr2ogr --version
 ```
 
-```Bash
-cd c:\data
-```
-
+`road_link_geographic` 레이어 다시 올리기:
 ```Bash
 ogr2ogr -progress --config PG_USE_COPY YES --config SHAPE_ENCODING UTF-8 -f PostgreSQL "PG:dbname='osgeo' host=localhost port=5432 user='postgres' password='postgres'" -overwrite -nlt PROMOTE_TO_MULTI -lco GEOMETRY_NAME=geom -lco FID=id -lco PRECISION=NO road_link_geographic.shp -nln public.road_link_geographic -s_srs EPSG:4326 -t_srs EPSG:4326
 ```
 
-<br>
 
+>[!note]
+>`OSGeo4W Shell` 대신 `파워쉘(pwsh)` 사용 한다면,
+
+환경실행파일 찾기(pwsh):
+```Bash
+Get-ChildItem -Path C:\ -Filter o4w_env.bat -Recurse -ErrorAction SilentlyContinue
+```
+
+환경실행파일 실행(pwsh):
+```Bash
+# 이 두 줄을 복사해서 붙여넣으세요
+$env:Path += ";C:\Program Files\QGIS 3.44.9\bin"
+$env:GDAL_DATA = "C:\Program Files\QGIS 3.44.9\share\gdal"
+
+# 다시 확인
+ogr2ogr --version
+```
+
+공간정보 여러개 올리기 실행파일 작성(pwsh):
+```shell
+# import_shps.ps1
+
+# 1. 사용자 설정
+$OSGEO4W_ENV = "C:\Program Files\QGIS 3.44.9\bin\o4w_env.bat"
+$DB_CONN = "PG:dbname='osgeo' host='localhost' port='5432' user='postgres' password='postgres'"
+$TARGET_SCHEMA = "public"
+$SRID = "5186"
+$ENCODING = "CP949"
+
+# 2. OSGeo4W 환경 로드 (파일이 있을 때만 경로 추가)
+if (Test-Path $OSGEO4W_ENV) {
+    # 배치파일의 디렉토리 경로를 추출하여 환경 변수에 추가
+    $binPath = Split-Path -Path $OSGEO4W_ENV -Parent
+    if ($env:Path -notlike "*$binPath*") {
+        $env:Path += ";$binPath"
+        
+        # GDAL 데이터 경로 설정 (C:\Program Files\QGIS 3.44.9\share\gdal)
+        $parentPath = Split-Path $binPath -Parent
+        $env:GDAL_DATA = Join-Path $parentPath "share\gdal"
+        
+        Write-Host "[INFO] QGIS GDAL 환경 로드 완료." -ForegroundColor Green
+    }
+} else {
+    Write-Error "[ERROR] OSGeo4W 환경 파일을 찾을 수 없습니다: $OSGEO4W_ENV"
+    Write-Host "팁: QGIS 설치 경로가 맞는지, 버전 숫자가 3.44.9가 맞는지 확인해 주세요." -ForegroundColor Yellow
+    Pause
+    exit
+}
+
+Write-Host ">>> PowerShell Import Started..." -ForegroundColor Cyan
+
+# 3. 모든 .shp 파일 루프 실행
+$shpFiles = Get-ChildItem -Filter *.shp
+
+if ($shpFiles.Count -eq 0) {
+    Write-Host "[NOTICE] 현재 폴더에 .shp 파일이 없습니다." -ForegroundColor Magenta
+}
+
+foreach ($file in $shpFiles) {
+    $tableName = $file.BaseName # 확장자 제외 파일명
+    
+    Write-Host "`n[Processing] $($file.Name) ---> $TARGET_SCHEMA.$tableName" -ForegroundColor Yellow
+
+    # ogr2ogr 실행 (백틱 ` 기호로 줄바꿈)
+    # 포트번호 등 DB_CONN 정보를 사용하여 접속합니다.
+    ogr2ogr -progress `
+        --config PG_USE_COPY YES `
+        --config SHAPE_ENCODING $ENCODING `
+        -f PostgreSQL $DB_CONN "$($file.FullName)" `
+        -nln "$TARGET_SCHEMA.$tableName" `
+        -overwrite `
+        -nlt PROMOTE_TO_MULTI `
+        -s_srs "EPSG:$SRID" `
+        -t_srs "EPSG:$SRID" `
+        -lco GEOMETRY_NAME=geom `
+        -lco FID=id `
+        -lco PRECISION=NO
+
+    # 실행 결과 확인 ($LASTEXITCODE는 마지막 외부 명령의 종료 코드)
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "[SUCCESS] $tableName 테이블 생성 완료." -ForegroundColor Green
+    } else {
+        Write-Host "[FAILED] $($file.Name) 임포트 중 오류 발생." -ForegroundColor Red
+    }
+}
+
+Write-Host "`n>>> All files processed." -ForegroundColor Cyan
+Pause
+```
+
+<br>
 ## 공간 SQL 기초
 
 <br>
@@ -961,10 +1074,11 @@ https://gdal.org/programs/index.html#vector-programs
 ogr2ogr로 가장 많이 하는 작업은 공간자료를 다룰 때 가장 힘든 작업인 벡터자료의 좌표계를 바꿔주는 작업입니다.
 실습 자료가 들어 있는 C:\data 폴더로 이동해서 firestation 레이어를 EPSG:5174 좌표계로 변환해 보겠습니다.
 
-```
+```bash
 cd C:\data
 ```
-```
+
+```bash
 ogr2ogr -s_srs EPSG:5186 -t_srs "+proj=tmerc +lat_0=38 +lon_0=127.0028902777778 +k=1 +x_0=200000 +y_0=500000 +ellps=bessel +units=m +no_defs" -f "ESRI Shapefile" --config SHAPE_ENCODING "CP949" firestation_5174.shp firestation.shp
 ```
 
@@ -988,7 +1102,7 @@ ogr2ogr의 인자를 하나씩 살펴보겠습니다.
 
 이번에는 공간자료의 파일 포맷 변환에 ogr2ogr을 사용해 보겠습니다.
 
-```
+```bash
 ogr2ogr -f "GPKG" output.gpkg PG:"host=localhost dbname=osgeo user=postgres password=postgres schemas=public tables=admin_emd,admin_sgg,admin_sid,building,firestation,healthcenter,policestation,river,road_link2,road_link_geographic,stores,subway,subway_station,wardoffice"
 ```
 
@@ -1009,7 +1123,7 @@ ogr2ogr -f "GPKG" output.gpkg PG:"host=localhost dbname=osgeo user=postgres pass
 
 심지어 DBMS가 아닌 파일에도 SQL로 원하는 자료만 뽑아 낼 수 있습니다.
 
-```
+```bash
 ogr2ogr -sql "select * from road_link2 where lanes >= 8" --config SHAPE_ENCODING "CP949" lane8.shp road_link2.shp
 ```
 
@@ -1031,7 +1145,7 @@ https://gdal.org/programs/index.html#raster-programs
 GDAL 명령어는 목적에 따라 여러가지를 사용합니다.
 먼저 래스터 데이터의 정보를 조회해 보겠습니다. 
 
-```
+```bash
 gdalinfo BlueMarbleNG-TB_2004-12-01_rgb_3600x1800.TIFF
 ```
 
@@ -1044,7 +1158,7 @@ Pixel Size = (0.100000000000000,-0.100000000000000)를 보니 한 픽셀이 0.1 
 
 이제 포맷 변환을 해보겠습니다.
 
-```
+```bash
 gdal_translate -of JPEG BlueMarbleNG-TB_2004-12-01_rgb_3600x1800.TIFF WorldMap.jpg
 ```
 
@@ -1059,7 +1173,7 @@ gdal_translate -of JPEG BlueMarbleNG-TB_2004-12-01_rgb_3600x1800.TIFF WorldMap.j
 
 래스터 데이터의 좌표계 변환도 많이 하는 작업입니다.
 
-```
+```bash
 gdalwarp -s_srs EPSG:4326 -t_srs EPSG:5179 -of GTiff -r cubic -te 123 32 132 44 -te_srs EPSG:4326 BlueMarbleNG-TB_2004-12-01_rgb_3600x1800.TIFF Korea_5179.tif
 ```
 
@@ -1075,7 +1189,7 @@ gdalwarp -s_srs EPSG:4326 -t_srs EPSG:5179 -of GTiff -r cubic -te 123 32 132 44 
 
 래스터 데이터를 빨리 보이게 하는 대표적인 방법이 미리보기(Overlay) 영상을 피라미드 처럼 다단계로 만들어 두는 것입니다.
 
-```
+```bash
 gdaladdo -r average BlueMarbleNG-TB_2004-12-01_rgb_3600x1800.TIFF 2 4 8 16 32
 ```
 
