@@ -11,7 +11,7 @@
 파드 이름을 `osgeo-pod`로 지정하고 필요한 모든 포트를 오픈합니다.
 
 ```powershell
-podman pod create --name osgeo-pod -p 5432:5432 -p 8070:80 -p 8080:8080
+podman pod create --name osgeo-pod -p 5432:5432 -p 8070:8070 -p 8080:8080
 ```
 
 ### 단계 2: PostGIS 실행
@@ -31,6 +31,7 @@ podman run -d --pod osgeo-pod --name postgis `
 podman run -d --pod osgeo-pod --name pgadmin `
   -e PGADMIN_DEFAULT_EMAIL=admin@admin.com `
   -e PGADMIN_DEFAULT_PASSWORD=admin `
+  -e PGADMIN_LISTEN_PORT=8070 `
   dpage/pgadmin4:8.14
 ```
 
@@ -41,6 +42,12 @@ podman run -d --pod osgeo-pod --name geoserver `
   -e GEOSERVER_DATA_DIR=/opt/geoserver_data `
   -v geoserver_data:/opt/geoserver_data:Z `
   docker.osgeo.org/geoserver:2.28.0
+```
+
+모니터링:
+
+```bash
+podman stats --no-stream --format "table {{.Name}} {{.CPUPerc}} {{.MemPerc}}"
 ```
 
 ---
