@@ -396,6 +396,31 @@ fc-list : family
 
 <br>
 
+>[!note]
+>podman 에서는 다음 과 같이 실행:
+
+컨터에너에 폴더(파일) 복사:
+```bash
+podman cp ./worldmap geoserver:/opt/geoserver_data/data/
+```
+
+복사 확인:
+```bash
+podman exec -it geoserver ls -l /opt/geoserver_data/data/worldmap
+```
+
+컨테이너 Bash 실행:
+```bash
+podman exec -it geoserver /bin/bash
+```
+
+폰트 확인:
+```bash
+fc-list : family
+```
+
+<br>
+
 설치된 폰트를 SLD에 적용하고, [적용하기]를 눌러 반영합니다.  
 
 ```xml
@@ -463,7 +488,7 @@ GeoServer가 사용하고 있는 SLD(Styled Layer Descriptor)는 역시 OGC가 �
 SLD에 대한 자세한 정보는 다음 링크를 참조하세요.  
 http://docs.geoserver.org/stable/en/user/styling/sld/reference/index.html#sld-reference
 
-</br>
+<br>
 
 ## uDig을 이용한 순쉬운 스타일링
 
@@ -480,6 +505,10 @@ uDig은 좋은 데스크탑 GIS 프로그램입니다. 하지만, 다른 유명 
 압축 파일을 풀고, uDig 실행:  
 `\udig-2.0.0.win32.win32.x86_64\udig\udig_internal.exe`
 
+>[!note]
+>로컬에 jre/jdk 없는 경우에는 Release 1.5.0 사용(1.5 는 jre 내장)
+
+<br>
 
 uDig을 실행되면, `레이어 - 추가…` 메뉴를 선택합니다.   
 ![](img/2022-02-02-16-45-50.png)
@@ -542,7 +571,7 @@ worldmap:ne_110m_populated_places 레이어의 스타일로 `world_city`를 선�
 어느 정도 확대된 정도까지만 도시들이 표시 되도록 '축척제어'를 적용하겠습니다. 이 때 중요한 정보가 미리보기 화면 좌하단에 있습니다. 현재 축척이 1 : 17M, 즉 1 : 17,000,000 이네요. 1 : 20,000,000 부터는 도시들이 사라지게 설정하겠습니다.  
 ![](img/2022-02-02-16-54-43.png)
 
-[스타일] 메뉴로 가, world_city 스타일을 선택하고, 스타일 편집기에서 `<sld:PointSymbolyzer>`가 시작하는 부분을 찾아 그 앞에 다음 행을 넣어 줍니다.   
+[스타일] 메뉴로 가서 world_city 스타일을 선택하고, 스타일 편집기에서 `<sld:PointSymbolyzer>`가 시작하는 부분을 찾아 그 앞에 다음 행을 넣어 줍니다.   
 
 ```xml
 <sld:MaxScaleDenominator>20000000</sld:MaxScaleDenominator>
@@ -553,7 +582,7 @@ worldmap:ne_110m_populated_places 레이어의 스타일로 `world_city`를 선�
 그리고 [제출] 하시면 Point 들이 보이게 될 최소 축척의 지정이 끝납니다.   
 ![](img/2022-02-02-16-57-20.png)
 
-<br/>
+<br>
 
 ## GWC를 이용한 캐시
 
