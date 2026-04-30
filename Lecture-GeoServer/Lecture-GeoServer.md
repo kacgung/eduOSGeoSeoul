@@ -83,6 +83,20 @@ GeoServer를 실행해 주세요. 윈도우에 직접 설치한 경우는 [시�
 
 GeoServer가 깔린 폴더에 있는 `geoserver_data` 폴더 아래의 `data` 폴더에 `worldmap` 이란 폴더를 만들어 주세요. 압축된 파일에서 다음 3개 레이어를 이 worldmap 폴더에 복사해 주세요. ESRI Shape 파일의 경우 이름이 같은 파일들을 모두 복사해야 함을 잊지 마세요.
 
+
+>[!note]
+>podman 에서는 다음 과 같이 실행
+>
+컨터에너에 폴더(파일) 복사:
+>```bash
+>podman cp ./worldmap geoserver:/opt/geoserver_data/data/
+>```
+>
+>복사 확인:
+>```bash
+>podman exec -it geoserver ls -l /opt/geoserver_data/data/worldmap
+>```
+
 - NE1_50M_SR_W.tif   
 - ne_110m_admin_0_countries.shp   
 - ne_110m_populated_places.shp
@@ -387,7 +401,6 @@ Container Bash 실행:
 ```
 docker exec -it geoserver bash
 ```
-<br>
 
 설치된 폰트 확인:
 ```
@@ -397,27 +410,16 @@ fc-list : family
 <br>
 
 >[!note]
->podman 에서는 다음 과 같이 실행:
-
-컨터에너에 폴더(파일) 복사:
-```bash
-podman cp ./worldmap geoserver:/opt/geoserver_data/data/
-```
-
-복사 확인:
-```bash
-podman exec -it geoserver ls -l /opt/geoserver_data/data/worldmap
-```
-
-컨테이너 Bash 실행:
-```bash
-podman exec -it geoserver /bin/bash
-```
-
-폰트 확인:
-```bash
-fc-list : family
-```
+>podman 에서는 다음 과 같이 실행
+>
+>컨테이너 Bash 실행:
+>```bash
+>podman exec -it geoserver /bin/bash
+>```
+>폰트 확인:
+>```bash
+>fc-list : family
+>```
 
 <br>
 
